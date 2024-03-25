@@ -6,7 +6,7 @@ How to use:
 
 Step 1: Create a folder with the path `C:\Users\UserName\Desktop\dess\`
 
-Step 2: Create a txt file with the name `C:\Users\UserName\Desktop\link.txt`, then paste the desired links into it.
+Step 2: Create a txt file with the name `C:\Users\UserName\Desktop\link.txt`, then paste the desired links into it, each url in one line.
 
 Step 3: Run `Program.cs` and Enjoy
 
