@@ -135,22 +135,23 @@ public class DownloadManager
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            var fullTasks = -1;
+            var totalNumberOfDownload = -1;
             var ct = cts.Token;
-            while (!ct.IsCancellationRequested)
+            while (!ct.IsCancellationRequested || Math.Abs(_percent - 100) > 0.01f)
             {
                 var tasks = new ConcurrentBag<WrapperTask>(Instance._wrapperDict.Values
-                    .Where(wrapperTask => wrapperTask.IsRunning()));
-                if (fullTasks < 0) fullTasks = tasks.Count;
+                    .Where(wrapperTask => wrapperTask.Task is { IsCanceled: false, IsFaulted: false }));
+                if (tasks.IsEmpty) break;
+                if (totalNumberOfDownload < 0) totalNumberOfDownload = tasks.Count;
                 _total = tasks.Select(task => task.TotalBytes).Aggregate((current, next) => current + next);
+                _percent = _totalBytesDownloaded / _total * 100;
                 // Calculate and display download speed
                 double speed = await CalculateDownloadSpeedAsync(tasks, stopwatch.Elapsed);
-                _percent = _totalBytesDownloaded / _total * 100;
 
                 // Move cursor to beginning of the line you want to delete
                 Console.SetCursorPosition(0, Console.CursorTop - 1);
 
-                Console.WriteLine($"Average download speed of all Url(s): {speed:F2} byte/s or {(speed * Math.Pow(10, -6)):F2} MB/s, {Completed}/{fullTasks}, {_percent:F2}%...");
+                Console.WriteLine($"Average download speed of all Url(s): {speed:F2} byte/s or {(speed * Math.Pow(10, -6)):F2} MB/s, {Completed}/{totalNumberOfDownload}, {_percent:F2}%...");
 
                 // Wait for a short interval before updating speed again
                 await Task.Delay(2000); // 2 second
