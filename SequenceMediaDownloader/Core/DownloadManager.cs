@@ -12,6 +12,10 @@ public class DownloadManager
 
     private readonly ConcurrentDictionary<string, WrapperTask> _wrapperDict = [];
 
+    private DownloadManager()
+    {
+    }
+
     public virtual void StartDownload(string url, string filePath)
     {
         string id;
